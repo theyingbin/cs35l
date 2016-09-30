@@ -1,0 +1,66 @@
+I first needed to get a copy of the buggy coreutils. I did this by using the
+following command:
+     wget http://web.cs.ucla.edu/classes/winter16/cs35L/
+     	  assign/coreutils-with-bug.tar.gz
+
+To unzip this file, I used the following command:
+     tar -xvf coreutils-with-bug.tar.gz
+
+Then I proceeded to build the executables. I used the -g flag to allow
+the debugging option to be turned on when I make the files
+     ./configure "CFLAGS=-g"
+     make
+
+I noticed that the build failed so I got a patch for the files using:
+     wget http://web.cs.ucla.edu/classes/winter16/cs35L/assign/coreutils.diff
+
+I patched the files using the command:
+     patch -p0 < coreutils.diff
+
+I noticed the 5 files below were patched:
+     lib/utimens.c
+     lib/utimens.h
+     src/copy.c
+     src/tee.c
+     src/touch.c
+
+I rebuilt the files and they worked as expected. Looking into the
+coreutils.diff file, I noticed the lines that were changed were just function
+names so the error we were getting earlier was probably a result of calling
+an undefined function.
+
+Now in order to reporduce the bug, I first needed to create 3 files with
+3 different timestamps as specified in the spec. I moved into a temporary
+directory and created these files using the following commands:
+     tmp=$(mktemp -d)
+     cd $tmp
+     touch -d '1918-11-11 11:00 GMT' wwi-armistice
+     touch now
+     sleep 1
+     touch now1
+
+I changed back to my directory to the src directory under the
+coreutils-with-bug directory and used the ls executable under the src directory
+     ./ls -lt $tmp/*
+
+Upon running the ls executable under the src directory, I can see that
+wwi-armistice comes before everything else even though it's the oldest file
+
+To debug this, I open up ls.c in emacs and open a gdb buffer(M-x gdb)
+Emacs asks how it should run gdb and I gave it 'gdb -i=mi ./ls' as input
+I noticed that in the sort_files function, qsort calls compare_mtime. So I set
+a breakpoint at compare_mtime and noticed it calls cmp_mtime. cmp_mtime calls
+timespec_cmp which does a comparison via subtraction. However, since
+wwi-armistice is very old, this results in an overflow error. I fixed this
+problem by doing comparisons in the cmp_mtimes function instead of calling
+timespec_cmp.
+
+Now to test my changes, I rebuilt the files and tried ./ls -lt $tmp/* again
+and it showed the correct output
+
+I tried to reproduce the error in my home directory on the SEASnet Linux
+servers by making those files in my home directory instead. I noticed that
+the date on wwi-armistice showed up as Dec 17 2054 and it showed up first on
+the list. This is because SEASnet servers are 64 bits and the date on the files
+were 32 bits, truncating the top 32 bits. Because of the truncated 32 bits,
+we lost the signed bit and the date displayed is in the future.

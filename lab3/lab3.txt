@@ -1,0 +1,44 @@
+We must first grab the original Coreutils 7.6 using the following command:
+   wget ftp://ftp.gnu.org/gnu/coreutils/coreutils-7.6.tar.gz
+Since we downloaded a tar.gz file, we must extract the contents. This is done
+using the following command
+   tar -xvf coreutils-7.6.tar.gz
+In the coreutils-7.6 file and I can run configure which will create the makefile
+   ./configure
+Now that the make file exists, I can run make, which will create object
+files in src and install the changes into the machine
+   make
+   make install
+I noticed that there are error messages since I do not have root permission
+I look at the INSTALL file and notice that the prefix option allows me to
+specify the path I want to install in. This was done using the commands below
+   ./configure --prefix=/u/ee/ugrad/yingw/cs35l/lab3/
+   make
+   make install
+In order to reproduce the bug on my machine, I go into the folder in which
+ls was installed into
+   cd ~/cs35l/lab3/bin
+   ./ls -l /bin/bash
+I can clearly see that the date is not in Unix format
+Now to fix the bug, we must change the source code of the ls.c file
+in the coreutils-7.6 src directory
+The changes are given in the following website:
+http://lists.gnu.org/archive/html/bug-coreutils/2009-09/msg00410.html
+With the new changes, we have to call make again in the top level of our source
+tree so it creates a new object file and executable corresponding to the changes
+
+Upon calling make, the only commands that do anything are the ones below
+  CC     ls.o    # New object file created
+  CCLD   dir	 # Recompiled dir
+  CCLD   vdir	 # Recompiled vdir
+  CCLD   ls	 # Recompiled ls
+The other commands just enter and leave directories. The new object file needed
+to be created since we changed the source code of ls.c. The executables needed
+to be recompiled because they probably have dependencies on ls.o
+
+In order to test the modified ls, I made two new files, one that is over a year
+old and one that was made recently. I did the following command to do this
+  touch foobar
+  touch --date="2015-01-01 00:00:00" hello
+I then ran the modified ls to verify that the date format is in traditional
+Unix format

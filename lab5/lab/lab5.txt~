@@ -1,0 +1,9 @@
+I first needed to get a copy of the buggy coreutils. I did this by using the
+following command:
+     wget http://web.cs.ucla.edu/classes/winter16/cs35L/
+     	  assign/coreutils-with-bug.tar.gz
+
+To unzip this file, I used the following command:
+     tar -xvf coreutils-with-bug.tar.gz
+
+Then 

@@ -1,0 +1,20 @@
+Q1. Brady's patch removed the line "case_long_iso_time_style:" because it was
+    simply messy code. It was a fall through case in a switch statement and is
+    not required to change the date format into traditional Unix format.
+
+Q2. This may cause some problems for people in other countries if they don't
+    speak English because they may not recognize the format and would need to
+    get accustomed to it. I would need to watch out for programs that would
+    expect another kind of date format as it would be a potential source of
+    bugs if our program expects a different kind of input.
+
+Q3. Since the file is empty, the "self.lines" variable in the randline class
+    containing a list of the lines is empty. When we attempt to call
+    random.choice from the random library, python gives us an IndexError
+
+Q4. When we run randline.py with python3, we get a SyntaxError. This is
+    because of the syntax difference between the two python interpreters.
+    This error occurs on line 65
+    	 except IOError as (errno, strerror):
+    This is because tuple unpackking has been removed in python3 because of
+    the problems it has caused

@@ -1,0 +1,28 @@
+2016-02-06  Ying Bin Wu  <yingw@lnxsrv09.seas.ucla.edu>
+
+	* ls.c Fixed the bug to sort files by the date in
+	which they were modified so it can handle very old files 
+
+--- src/ls.c~	2005-10-15 02:56:21.000000000 -0700
++++ src/ls.c	2016-02-06 12:48:29.592672000 -0800
+@@ -2877,9 +2877,17 @@
+ cmp_mtime (struct fileinfo const *a, struct fileinfo const *b,
+ 	   int (*cmp) (char const *, char const *))
+ {
+-  int diff = timespec_cmp (get_stat_mtime (&b->stat),
+-			   get_stat_mtime (&a->stat));
+-  return diff ? diff : cmp (a->name, b->name);
++  int first = get_stat_mtime (&a->stat).tv_sec;
++  int second = get_stat_mtime (&b->stat).tv_sec;
++  if(first < second){
++    return 1;
++  }
++  else if(second < first){
++    return -1;
++  }
++  else{
++    return cmp(a->name, b->name);
++  }
+ }
+ static int compare_mtime (V a, V b) { return cmp_mtime (a, b, xstrcoll); }
+ static int compstr_mtime (V a, V b) { return cmp_mtime (a, b, strcmp); }

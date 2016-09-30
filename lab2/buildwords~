@@ -1,0 +1,14 @@
+#!/bin/bash
+
+sed '/<!DOCTYPE/,/Adopt/d' |
+sed '/<\/table/,/<\/html>/d' |
+sed '/<tr>/,/<\/td>/d' |
+grep '<td>.*<\/td>' |
+sed 's/([^)]*)//' |
+sed 's/`/'"'"'/g' |
+sed 's/<[^>]*>//g' |
+tr -s "[:blank:]" |
+sed 's/^[ \t]*//'
+#tr "[:blank:]|," "\n" |
+#tr '[:upper:]' '[:lower:]' |
+#sort -u

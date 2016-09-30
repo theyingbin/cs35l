@@ -1,0 +1,58 @@
+To start off this lab, I had to first get a copy of the Diffutils repository
+This was done using the following command:
+     git clone git://git.savannah.gnu.org/diffutils.git
+I was able to get and store the log of changes in Diffutils made to the
+master branch using the following command:
+     git log > git-log.txt
+To generate and store the list of tags, I used
+     git tag > git-tags.txt
+In order to find the commit that was entitled "maint: quote 'like this' or
+"like this", not `like this'", I looked in the git-log.txt file and did an
+incremental search for the title. I then copied the hashcode which was
+62ca21c8c1a5aa3488589dcb191a4ef04ae9ed4f. In the shell, I was able to get and
+store the patch using the following command:
+     git show 62ca21c8c1a5aa3488589dcb191a4ef04ae9ed4f > quote-patch.txt
+After this, I checked out version 3.0 from the repository using the command:
+     git checkout v3.0 -b newbranch
+In order to apply the patch, I used the following command:
+     patch -p1 < quote-patch.txt
+When applying the patch, I noticed that some of the hunks that were supposed
+to be modified were rejected and put into .rej files
+To see which files were changed during the patch, I used the following command:
+     git status
+This shows the modified and untracked files in our working copy
+I then opened all the modified non .c files and reverted it using vc-revert
+     emacs <filename>
+     C-x v u  (vc-revert)
+In order to make sure that I was only modifying string constants in the .c
+files, I opened the .c files up in emacs and looked in the vc-diff buffer
+if the change was applied to a comment, I would revert it by undoing the
+diff-apply-hunk. If it was applied to a string constant, I would leave it alone.
+     emacs <filename.c>
+     C-x v = (opens vc-diff buffer)
+     C-c C-a (apply/undo diff-apply-hunk)
+I noticed that when applying the patch, some of the changes were rejected and
+stored in .rej files. I needed to apply the changes in these rej files manually.
+To do this, I looked into the src/*.c.rej files and took note of the lines
+in which the backticks were changed for comments only. I then went into the
+corresponding .c file and reverted the changes manually.
+In order to remove all the untrakced files, I used 'git status' to see which
+files needed to be removed and removed them using the rm command
+In order to see the changes made and store those changes, I used the command:
+     git diff > quote-3.0-patch.txt
+To build the modified version of Diffutils, I looked into README-hacking and
+used the following commands:
+     ./bootstrap
+     ./configure
+     make
+     make check
+I verified that "./diff . -" and "./diff --help" did the right thing now
+In order to check the difference between my source code and Diffutils 3.0's
+source code, I had to first get a copy of the source code in each branch
+I did this by going to the branch v3.0 and getting a copy of it's src folder
+I then switched back to my modifed branch and got a copy of it's src folder
+I was able to compare the two folders using the following command:
+     ./diffutils/src/diff -pru diffutils-3.0 diffutils-3.0-patch >
+       quote-3.0-test.txt
+I then compared my quote-3.0-test.txt and my quote-3.0-patch.txt and the
+differences were not innocuous

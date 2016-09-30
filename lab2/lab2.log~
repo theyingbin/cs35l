@@ -1,0 +1,51 @@
+Lab 2 Log
+1. sort < /usr/share/dict/words > words
+This sorts the contents of /usr/share/dict/words and puts the results into words
+
+2. wget http://web.cs.ucla.edu/classes/winter16/cs35L/assign/assign2.html
+This downloads the HTML source code for the assignment 2 page
+
+3. cat assign2.html | tr -c 'A-Za-z' '[\n*]'
+This translates any character not in the alphabet into a newline character
+
+4. cat assign2.html | tr -cs 'A-Za-z' '[\n*]'
+This does the same thing as before except it squeezes all characters not in the
+alphabet into a single newline character
+
+5. cat assign2.html | tr -cs 'A-Za-z' '[\n*]' | sort
+This does the same thing as before except it now sorts the output based on
+the ASCII code for each character
+
+6. cat assign2.html | tr -cs 'A-Za-z' '[\n*]' | sort -u
+This does the same thing as before except it gets rid of duplicates
+
+7. cat assign2.html | tr -cs 'A-Za-z' '[\n*]' | sort -u | comm - words
+This compares the words of assign2.html to the words in the file "words"
+The first column shows the words unique to assign2.html
+The second column shows the words unique to the file "words"
+The third column shows words in both assign2.html and the file "words"
+
+8. cat assign2.html | tr -cs 'A-Za-z' '[\n*]' | sort -u | comm -23 - words
+This does the same thing as above except it omits the second and third column
+
+9.
+
+!/bin/bash
+
+sed '/<!DOCTYPE/,/Adopt/d' |
+sed '/<\/table/,/<\/html>/d' |
+sed '/<tr>/,/<\/td>/d' |
+grep '<td>.*<\/td>' |
+sed 's/([^)]*)//' |
+sed 's/`/'"'"'/g' |
+sed 's/<[^>]*>//g' |
+tr "[:blank:]|," "\n" |
+tr '[:upper:]' '[:lower:]' |
+sort -u
+
+10. To find the misspelled hawaiian words given hwords, I used
+tr '[:upper:]' '[:lower:]' | tr -cs 'A-Za-z' '[\n*]' |
+sort -u | comm -23 - hwords | wc
+Using this, I found 405 misspelled hawaiian words
+
+Using the command in answer #8, I found there to be 80 misspelled English words

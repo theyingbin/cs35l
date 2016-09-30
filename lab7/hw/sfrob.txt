@@ -1,0 +1,52 @@
+I compared the runtime differences between my sfrob, sfrobu, and sfrobs using the time command. 
+
+10 spaces:
+
+   sfrob
+   real    0m0.003s
+   user    0m0.000s
+   sys     0m0.002s
+
+   sfrobu
+   Comparisons: 24
+   real    0m0.002s
+   user    0m0.000s
+   sys     0m0.002s
+
+   sfrobs
+   real    0m0.005s
+   user    0m0.003s
+   sys     0m0.005s
+
+   We can see for small files, that the runtimes are all comparable
+
+500000 spaces:
+
+   sfrob
+   real    0m1.447s
+   user    0m0.491s
+   sys     0m0.058s
+
+   sfrobu
+   Comparisons: 4692521
+   real    0m5.821s
+   user    0m0.704s
+   sys     0m5.102s
+
+   sfrobs
+   real    0m1.061s
+   user    0m0.131s
+   sys     0m0.076s
+
+   We can see that for big files, sfrobu is significantly slower than sfrobs and sfrob
+
+My estimate for the number of comparisons as a function of spaces is n*log(n) comparisons for n spaces
+
+Number of spaces            Comparisons
+10			    24
+100                         569
+1000                        9080
+10000                       125574
+100000                      1602111
+
+This table shows that sfrobu roughly has n*log(n) compaisons as expected of a quicksort function

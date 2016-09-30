@@ -1,0 +1,73 @@
+#!/bin/bash
+
+IFS=$'\n'
+dir=$1
+cd "$dir"
+
+declare -a regFiles
+declare -a readables
+
+RESULT=`ls -1a | sort`
+
+dotFiles=`ls -1a | sort | grep "^\."`
+
+regSize=0
+readSize=0
+
+for FILE in $dotFiles
+do
+    if [ -f "$FILE" ]
+    then
+	regFiles[$regSize]="$FILE"
+	let regSize=regSize+1
+    fi
+done
+
+for FILE2 in $RESULT
+do
+    duplicate="false"
+    if [ -f "$FILE2" ]
+    then
+	for i in "${regFiles[@]}"
+	do
+	    if [ "$FILE2" -ef "$i" ]
+	    then
+		duplicate="true"
+	    fi
+	done
+	if [ $duplicate = "false" ]
+	then
+	   regFiles[$regSize]="$FILE2"
+	   let regSize=regSize+1
+	fi
+    fi
+done
+
+for i in "${regFiles[@]}"
+do
+    if [ -r "$i" ]
+    then
+	readables[$readSize]="$i"
+	let readSize=readSize+1
+    else
+	printf "$i is not readable\n"
+    fi
+done
+
+let readSize=$readSize-1
+
+for i in `seq 0 $readSize`
+do
+    for j in `seq $i $readSize`
+    do
+	if [ "$i" != "$j" ]
+	then
+	    cmp -s "${readables[i]}" "${readables[j]}"
+	    if [ $? -eq 0 ]
+	    then
+		rm "${readables[j]}"
+		ln "${readables[i]}" "${readables[j]}"
+	    fi
+	fi
+    done
+done

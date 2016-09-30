@@ -1,0 +1,10 @@
+#!/bin/bash
+
+temp=`ls /usr/bin | awk 'NR%101==104485521%101'`
+
+for x in "$temp"
+do
+    y=`which $x`
+    ldd $y
+done
+

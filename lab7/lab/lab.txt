@@ -1,0 +1,85 @@
+Writing and testing tr2b.c and tr2u.c:
+  I wrote tr2b.c and tr2u.c by contsantly referring to the slides my TA posted
+
+  I had some trouble with the syntax of read an write in tr2u.cso I
+  experimented with different arguments until I got something that worked.
+
+  To test that tr2b.c and tr2u.c worked, I compiled them and ran them
+  through the following test cases:
+    echo 'hello world' | ./tr2b 'he' '23'
+    echo 'hello world' | ./tr2u 'he' '23'
+    echo 'hello world' | ./tr2b 'hh' '23'
+    echo 'hello world' | ./tr2b 'he' '2'
+    echo 'hello world' | ./tr2b 'he' '2]'
+    echo 'hello worl]' | ./tr2b 'h]' '2\'
+
+
+strace:
+  We first need to create a file that is at least 5,000,000 bytes. I did this
+  by writing a C program that loops 1,000,000 times and prints 'helloworld' and
+  kept the output in a file. 
+
+  We can use strace to keep track of the number of system calls our program
+  used. We need to find the number of system calls a)when copying one file to
+  another and b)when copying a file to the terminal. To do this, I used the
+  following commands:
+
+    1) strace –o strace_buf_output ./tr2b 'he' '23' < largeFile
+    2) strace –o strace_buf_output1 ./tr2b 'he' '23' < largeFile > output
+    3) strace –o strace_unbuf_output ./tr2u 'he' '23' < largeFile
+    4) strace –o strace_unbuf_output1 ./tr2u 'he' '23' < largeFile > output1
+
+  Commands 1 and 3 copy the contents of one file to another. Commands 2 and 4
+  copy the contents of a file to the terminal
+
+  I found out the number of system calls by using the wc command on each of
+  the files and looking at the line count. The first command in the list of
+  commands earlier results in 4990 system calls. The second command results in
+  184 system calls. The third and fourth command resulted in millions of
+  system calls.  The reason why the second command results in so many less
+  system calls than the first is because the computer optimizes the writes when
+  writing to another file. When writing to the terminal, the computer must
+  worry about latency. However, the third and fourth command didn't differ
+  much since we do two system calls for every byte. This can be seen when
+  we look into the files where we stored the output of strace. When writing
+  to the terminal in the buffered case, we write 1024 bytes at a time and read
+  65536 bytes at a time. When writing from one file to another in the buffered
+  case, we write 65536 bytes at a time and read 65536 bytes at a time. However,
+  in the unbuffered case, we read and write 1 byte at a time regardless of
+  whether we are writing to the terminal or to another file.
+
+
+time:
+  To time the programs for the different cases, I used the following commands:
+    1) time ./tr2b 'he' '23' < largeFile
+    2) time ./tr2b 'he' '23' < largeFile > file
+    3) time ./tr2u 'he' '23' < largeFile
+    4) time ./tr2u 'he' '23' < largeFile > file
+
+  My results were as follows for the 1st, 2nd, 3rd, and 4th
+  commands respectively:
+
+  time ./tr2b 'he' '23' < largeFile
+    real    0m0.946s
+    user    0m0.209s
+    sys     0m0.037s
+
+  time ./tr2b 'he' '23' < largeFile > file
+    real    0m0.238s
+    user    0m0.167s
+    sys     0m0.007s
+
+  time ./tr2u 'he' '23' < largeFile
+    real    0m5.487s
+    user    0m0.388s
+    sys     0m5.025s
+
+  time ./tr2u 'he' '23' < largeFile > file
+    real    0m5.799s
+    user    0m0.321s
+    sys     0m5.415s
+    
+  As explained earlier, command 2 results in less system calls than command 1,
+  thus as expected, it runs faster. Likewise, since commands 3 and 4 result in
+  a system call for every byte, the time for each command is very similar to
+  each other and much larger than the time required for commands 1 and 2.

@@ -1,0 +1,20 @@
+1. If the other team has been observing all the bytes going across the network,
+   my resulting network is still secure because the bytes sent across are
+   encrypted.
+
+   If the other team has tapped into my keyboard and observed all my
+   keystrokes, then our data would still be secure assuming that we don't
+   type any important data, such as passwords, across the network. For example,
+   if we login using keys, the other team won't be able to get any information
+   when I send files since I would be using public keys to encrypt data.
+
+   If the other team had physical control of the USB I'm booting off of then
+   they have access to our private key. They can use our private key to decrypt
+   anything that is sent to us. Our team's weakness was allowing them access to
+   the USB that we boot off of.
+
+2. gpg --verify does not verify the identity of the person who sent the file
+   versus the signature of the person. An attacker can easily take somebody
+   else's public key and add their signature. To fix this problem, we need a
+   third party, or Certificate Authority, to prove that the person who sent
+   the file is who they claim to be. 

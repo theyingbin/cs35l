@@ -1,0 +1,32 @@
+I started by making a new branch named quote. This was done using:
+     git checkout v3.0 -b quote
+I needed to apply the patch I made in the lab. This was done using:
+     patch -p1 < quote-3.0-patch.txt
+I now need to make a Changelog file. I did this by opening up emacs and used
+the add-change-log-entry-other-window command (C-x 4 a). I referred back to
+git status in the shell to see which files were changed so I can describe the
+changes.
+After finishing Changelog, I needed to commit the changes while using
+Changelog as my message. This was done using:
+     git add .
+     git commit -F Changelog
+In order to create and store a formatted patch file, I used the command:
+     git format-patch -1 --stdout > formatted-patch.txt
+I then emailed my patch to my partner, Menglin Ruan, and got a copy of her
+patch. To verify that Menglin's patch worked, I checked v3.0 again and applied
+her patch using the following commands:
+     git checkout -b partner
+     git am < formatted-patch.txt
+I then setup the system using:
+     ./bootstrap
+     ./configure
+     make
+     make check
+In order to verify that commit message was added, I ran the following commands:
+     make distdir
+     emacs diffutils*/ChangeLog
+In order to run gitk, I needed the emacs repository. I got it using:
+     git clone git://git.savannah.gnu.org/emacs.git
+After installing X11, I had to restart my session of putty and enable X11
+forwarding. After I did this setup, I was able to run gitk in the emacs
+repository that I cloned earlier.

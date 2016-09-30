@@ -1,0 +1,70 @@
+1. I used 'man man' to look at the man page for the man command
+   I found that the -k flag allows me to specify a word to look for in the man
+   pages and prints out the command the specified word describes
+2. I used the 'which' command to look at where 'cp' and 'wc' are in the file
+   system. I found that 'cp' is located in /usr/local/cs/bin/cp and 'wc' is
+   located in /usr/local/cs/bin/wc
+3. I first looked at my path environment variable to see where the shell looks
+   for commands using 'echo $PATH'. Since this prints out a list of directories,
+   I searched these directories for one word executables using the command
+   'find [path] -executable -name ?' where I simply replace '[path]' for a
+   directory found in my path environment variable. I found the one word
+   executables to be the following:
+   /usr/local/cs/bin/[
+   /usr/bin/w
+   /usr/bin/[
+   /usr/bin/X
+   The command w shows who is logged in and what they are doing
+   The command X launches a portable, network-transparent window system
+   The command [ is a built-in symbol in bash
+4. To find out the file that is actually executed when I use the command
+   /usr/bin/emacs, I used the 'readlink' command. I kept using readlink
+   on the output of the previous command until the shell didn't print
+   anything, indicating that we found the executable. I found that the
+   command that is actually executed is /usr/bin/emacs-24.3
+5. In order to find out what 'g+s' and 'o-x' means, I looked in the man page
+   for chmod. I found out that 'g+s' turns the setgid bit on, which allows
+   the group to run the executable with the owner's permission. Also 'o-x'
+   sets the executable bit for others off, meaning people that are not in
+   your group cannot run the executable.
+6. I looked in the man pages for find and found that the -mtime option allows
+   me to see which files have been modified. I found the files which have been
+   modified in the last 3 weeks using the command 'find -mtime 21'
+7. In order to find all the directories that have been modified within the last
+   3 weeks, I used the command 'find / -mtime 21 -type d' to find all
+   directories from the root.
+8. To find the directory that find is in, I used which find and found it to be
+   in /usr/bin. I found the number of symbolic links in this directory by using
+   the command 'find /usr/bin -type l | wc -l' and got the answer 287
+9. In order to find the oldest file, I used the command 'ls /usr/lib -lt' and
+   looked at the file on the bottom. I found that the oldest file is
+   'libfreeblpriv3.so' and was last modified on Aug  7 13:43.
+10. I looked into the man pages for locale and found that it gets its data
+    from the LC_* variables
+11. To look for the emacs commands that have sort in their name, I opened
+    emacs and used the command 'C-h a sort' and got the following list:
+    Buffer-menu-sort
+    sort-columns
+    sort-fields
+    sort-lines
+    sort-numeric-fields
+    sort-pages
+    sort-paragraphs
+    sort-regexp-fields
+    tabulated-list-col-sort
+    tabulated-list-sort
+12. To find a list of commands, I used the command 'C-h b'
+    C-M-a beginning-of-defun
+    C-M-b backward-sexp
+    C-M-c exit-recursive-edit
+    C-M-d down-list
+    C-M-e end-of-defun
+    C-M-f forward-sexp
+    C-M-g This command does not exist
+    C-M-h mark-defun
+13. C-g will cancel the current partially typed or executing command
+14. The yank function reinserts the last stretch of killed text
+15. In order to see the output of the dired command in Emacs, I used the
+    keystrokes 'C-x d /usr/bin'. From inspection I can see that the dired
+    command shows some hidden files that ls -l doesn't. It also shows the
+    files '.' and '..'

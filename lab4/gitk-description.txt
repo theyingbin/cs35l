@@ -1,0 +1,18 @@
+The top left window shows us the structure of the repository and the different
+branches in the repository. It shows us where the HEAD and master branch are
+as well as the commits made on them.
+
+The window in the upper middle column shows the name and email address of the
+person who made the commit.
+
+The window in the upper right hand corner shows us when the commit was made.
+
+Below that shows a window in which information about the commit is shown.
+This includes the name and email of the person who made the commit, the time
+stamp in which the commit was made and parent and child commits.
+
+The window below the one described above shows changes made to the repository
+in a diff format.
+
+The window to the right of the one described above shows files that were
+changed or modified from the commit
